@@ -8,6 +8,13 @@ struct cliente {
    char  nome[50];
    int   nif;
 };
+
+struct servicos {
+}
+
+struct faturacao{
+}
+
 void menu_clientes()                                                                                //Função clientes
     {
             system("cls");                                                                          //Limpar ecrã
