@@ -1,0 +1,3 @@
+- Identificação dos clientes será feita através do NIF,
+  sendo assim, é necessário atualizar a forma de remção 
+  e atualização dos clientes.
