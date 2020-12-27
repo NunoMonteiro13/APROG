@@ -3,7 +3,7 @@
 #include <string.h>
 #include <locale.h>                                                                                                     //Biblioteca para lingua portuguesa
 
-/*Delcaração protótipo das funções*/
+/*Delcaração protótipo das funções kick off*/
 void menu_principal();
 void inserir_cliente();
 void menu_clientes();
