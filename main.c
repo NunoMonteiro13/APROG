@@ -4,19 +4,22 @@
 #include <locale.h>                                                                                 //Biblioteca para acentuação da lingua portuguesa
 
 
-struct cliente {
+struct cliente
+{
    char  nome[50];
    int   nif;
 };
 
-struct servicos {
-}
+struct servicos
+{
+};
 
-struct faturacao{
-}
+struct faturacao
+{
+};
 
-void menu_clientes()                                                                                //Função clientes
-    {
+void menu_clientes()                                                                                //Função client
+{
             system("cls");                                                                          //Limpar ecrã
             int escolha_menu;                                                                       //variável local para guardar o valor da escolha do menu
                         /*Cabeçalho do menu e formatação "gráfica"*/
