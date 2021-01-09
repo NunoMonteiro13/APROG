@@ -3,29 +3,55 @@
 #include <string.h>
 #include <locale.h>                                                                                                     //Biblioteca para lingua portuguesa
 
-/*Delcaração protótipo das funções kick off*/
+/*Delcaração protótipo das funções*/
 void menu_principal();
 void inserir_cliente();
 void menu_clientes();
 void menu_servicos();
-void menu_listagens();
+//void menu_listagens(struct canais channel[0]);
 void menu_informacoes();
 void menu_faturacao();
 void info_cliente();
 void atualizar_cliente();
 void remover_cliente();
+void inserir_canais();
+
+//struct nomecanal info_canais(struct nomecanal);
 
 
+
+/*Como não sabemos a quantidade de clientes que vão ser introduzidos,
+foi criado um vector para ser possivel guardar vários clientes,
+e posteriormente no programa, o tamanho deste
+vector será assignado pelo input do utilizador.*/
 struct cliente {
    char  nome[50];
    int   nif;
 };
-struct cliente client[0];                                                                                               /*Como não sabemos a quantidade de clientes que vão ser introduzidos,
-                                                                                                                        foi criado um vector para ser possivel guardar vários clientes,
-                                                                                                                        e posteriormente no programa, o tamanho deste
-                                                                                                                        vector será assignado pelo input do utilizador.
-                                                                                                                        */
+struct cliente client[0];
+
+struct canais {
+   char  canal[50];
+   int   quantidade;
+};
+struct canais nomecanal[0];
+void info_canais(struct canais channel[0]);
+
+
+struct servicosadicionais {
+   char  servicos[50];
+};
+struct servicosadicionais nomeservico[0];
+
+struct tarifariovoz {
+   char  tarifario[50];
+};
+struct tarifariovoz nometarifario[0];
+
+
 int numero_client_total = 0;                                                                                            //variável que guarda o número total de clientes no programa
+//int numero_canais_total = 0;                                                                                          //variável que guarda o número total de cnais no programa
+
 
 void menu_principal()                                                                                                   //Função menu
     {
@@ -41,18 +67,19 @@ void menu_principal()                                                           
             printf("|     5-Faturação                                            |\n");
             printf("|------------------------------------------------------------|\n");
 
-            scanf("%d", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            scanf("%c", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            fflush(stdin);
             switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
             {
-                case 1: menu_clientes();                                                                                //caso o valor introduzido seja '1' -> a função menu_clientes é invocada
+                case '1': menu_clientes();                                                                                //caso o valor introduzido seja '1' -> a função menu_clientes é invocada
                     break;
-                case 2: menu_servicos();                                                                                //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
+                case '2': menu_servicos();                                                                                //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
                     break;
-                case 3: menu_listagens();                                                                               //caso o valor introduzido seja '3' -> a função menu_listagens é invocada
+                case '3': menu_listagens();                                                                               //caso o valor introduzido seja '3' -> a função menu_listagens é invocada
                     break;
-                case 4: menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
+                case '4': menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
                     break;
-                case 5: menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
+                case '5': menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
                     break;
             }
     }
@@ -97,31 +124,80 @@ void menu_clientes()                                                            
             printf("|     4-Voltar ao menu principal                             |\n");
             printf("|------------------------------------------------------------|");
 
-            scanf("%d", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            scanf("%c", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            fflush(stdin);
             switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
             {
-                case 1: inserir_cliente();                                                                              //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
+                case '1': inserir_cliente();                                                                              //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
                     break;
-                case 2: atualizar_cliente();                                                                            //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
+                case '2': atualizar_cliente();                                                                            //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
                     break;
-                case 3: remover_cliente();                                                                              //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
+                case '3': remover_cliente();                                                                              //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
                     break;
-                case 4: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+                case '4': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                     break;
             }
     }
+
+void  inserir_canais()                                                                                                  //função recebe por referência a estrutura canais
+    {
+
+        system("cls");                                                                                                  //Limpar ecrã
+        int i = 0;                                                                                                      //Inicialização da variável contadora i
+        int j = 0;
+        int quantidade_canais = 0;
+        printf("Indique a quantidade de canais a serem inseridos: ");
+        scanf("%d", &quantidade_canais);                                                                                //Leitura da quantidade de canais introduzida para a variável quantidade_serviços
+        for(i = 0; i < quantidade_canais; ++i)                                                                          //Inicialização do ciclo 'para' que começa em 0, vai até o numero de canais introduzidos e incrementa de 1 em 1
+            {
+                printf("Insira o %d canal a ser adicionado: ", i+nomecanal[0].quantidade);
+                scanf(" %[^\t\n]c", nomecanal[i+nomecanal[0].quantidade].canal);                                                //Leitura do nome do cliente introduzido com a possibilidade de ler nomes separados por espaços
+                system("cls");
+            }
+        nomecanal[0].quantidade = quantidade_canais + nomecanal[0].quantidade;
+        printf("%d canais introduzidos com sucesso!\n", quantidade_canais);
+        printf("total de canais = %d\n", nomecanal[0].quantidade);
+        system("pause");
+        menu_principal();                                                                                               //Após intrudoção dos clientes o programa volta para o menu principal
+    }
+
 void menu_servicos()                                                                                                    //Função serviços
     {
             system("cls");                                                                                              //Limpar ecrã
+            int escolha_menu;                                                                                           //variável local para guardar o valor da escolha do menu
                     /*Cabeçalho do menu e formatação "gráfica"*/
             printf("|------------------------------------------------------------|");
             printf("\n|                    MENU SERVIÇOS                           |\n");
-            printf("|     1-Canais disponíveis                                   |\n");
-            printf("|     2-Servicos adicionais                                  |\n");
-            printf("|     3-Tarifários do serviço de voz                         |\n");
-            printf("|     4-Voltar ao menu principal                             |\n");
+            printf("|     1-Inserir Canais disponíveis                           |\n");
+            printf("|     2-Inserir Servicos adicionais                          |\n");
+            printf("|     3-Inserir Tarifários do serviço de voz                 |\n");
+            printf("|     4-Remover Canais disponíveis                           |\n");
+            printf("|     5-Remover Serviços adicionais                          |\n");
+            printf("|     6-Remover Tarifários do serviço de voz                 |\n");
+            printf("|     7-Voltar ao menu principal                             |\n");
             printf("|------------------------------------------------------------|");
+            scanf("%c", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            fflush(stdin);
+            switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
+            {
+                case '1': inserir_canais();                                                                               //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
+                    break;
+//                case '2': atualizar_cliente();                                                                            //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
+//                    break;
+//                case '3': remover_cliente();                                                                              //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
+//                    break;
+//                case '4': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+//                case '5': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+//                case '6': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+//                case '7': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+            }
+
     }
+
 void menu_listagens()                                                                                                   //Função listagens
     {
             system("cls");                                                                                              //Limpar ecrã
@@ -137,19 +213,20 @@ void menu_listagens()                                                           
             printf("|     6-Lista de tarifários                                             |\n");
             printf("|     7-Voltar ao menu principal                                        |\n");
             printf("|-----------------------------------------------------------------------|");
-            scanf("%d", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            scanf("%c", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
             switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
+
             {
-                case 1: info_cliente();                                                                                 //caso o valor introduzido seja '1' -> a função info_cliente é invocada
+                case '1': info_cliente();                                                                                 //caso o valor introduzido seja '1' -> a função info_cliente é invocada
                     break;
-                /*case 2: menu_servicos();                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
-                    break;
-                case 3: menu_listagens();                                                                               //caso o valor introduzido seja '3' -> a função menu_listagens é invocada
-                    break;
-                case 4: menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
-                    break;
-                case 5: menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
-                    break;*/
+//                case '2': menu_servicos();                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
+//                    break;
+                case '3': info_canais(nomecanal);                                                                                  //caso o valor introduzido seja '3' -> a função info_canais é invocada
+//                      break;
+//                case '4': menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
+//                    break;
+//                case '5': menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
+//                    break;
             }
     }
 void menu_informacoes()                                                                                                 //Função informações
@@ -176,8 +253,6 @@ void menu_faturacao()                                                           
     }
 void info_cliente()
     {
-
-
         system("cls");                                                                                                  //Limpar ecrã
         int i = 0;
         printf("Numero de clientes total: %d\n", numero_client_total);
@@ -253,7 +328,23 @@ void remover_cliente()
         menu_principal();
     }
 
+void info_canais(struct canais channel[0])
+    {
+        system("cls");                                                                                                  //Limpar ecrã
+        int i = 0;
+        printf("Numero de canais total: %d\n", channel[0].quantidade);
+        for(i = 0; i < channel[0].quantidade; ++i)
+            {
+                printf("\n Canal %d inserido: ", i);
+                printf("%s\n", channel[i].canal);
+            }
+        system("pause");                                                                                                //Pausa o programa antes que outra função seja selecionada
+        menu_principal();
+    }
+
 int main( ) {
         setlocale(LC_ALL,"Portuguese");                                                                                 //Linguagem local para a utilização dos acentos da língua portuguesa
         menu_principal();
+
 }
+
