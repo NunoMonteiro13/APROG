@@ -176,6 +176,7 @@ void menu_servicos()                                                            
             printf("|     6-Remover Tarifários do serviço de voz                 |\n");
             printf("|     7-Voltar ao menu principal                             |\n");
             printf("|------------------------------------------------------------|");
+<<<<<<< HEAD
             scanf("%c", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
             fflush(stdin);
             switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
@@ -193,6 +194,24 @@ void menu_servicos()                                                            
 //                case '6': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
 //                    break;
 //                case '7': menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+=======
+            scanf("%d", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
+            {
+                case 1: inserir_canais();                                                                               //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
+                    break;
+//                case 2: atualizar_cliente();                                                                            //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
+//                    break;
+//                case 3: remover_cliente();                                                                              //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
+//                    break;
+//                case 4: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+//                case 5: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+//                case 6: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                    break;
+//                case 7: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+>>>>>>> a1e7d1e21bb82bbd4554e1d61beba4471bc3535d
 //                    break;
             }
 
@@ -217,6 +236,7 @@ void menu_listagens()                                                           
             switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
 
             {
+<<<<<<< HEAD
                 case '1': info_cliente();                                                                                 //caso o valor introduzido seja '1' -> a função info_cliente é invocada
                     break;
 //                case '2': menu_servicos();                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
@@ -226,6 +246,17 @@ void menu_listagens()                                                           
 //                case '4': menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
 //                    break;
 //                case '5': menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
+=======
+                case 1: info_cliente();                                                                                 //caso o valor introduzido seja '1' -> a função info_cliente é invocada
+                    break;
+//                case 2: menu_servicos();                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
+//                    break;
+                case 3: info_canais(nomecanal);                                                                                  //caso o valor introduzido seja '3' -> a função info_canais é invocada
+//                      break;
+//                case 4: menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
+//                    break;
+//                case 5: menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
+>>>>>>> a1e7d1e21bb82bbd4554e1d61beba4471bc3535d
 //                    break;
             }
     }
