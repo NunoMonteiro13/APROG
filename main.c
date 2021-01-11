@@ -3,7 +3,7 @@
 #include <string.h>
 #include <locale.h>                                                                                                     //Biblioteca para lingua portuguesa
 
-/*Delcaração protótipo das funções*/
+/*Declaração protótipo das funções*/
 void menu_principal();
 void inserir_cliente();
 void menu_clientes();
@@ -14,12 +14,39 @@ void menu_faturacao();
 void info_cliente();
 void atualizar_cliente();
 void remover_cliente();
+int* selecionar_cliente();
+void adicionar_canal();
+void menu_canais_base();
+void menu_canais_extra();
+void menu_canais_extra_xl();
+void menu_disney();
+void menu_canais_extra();
+void menu_sportv();
+void menu_tvcine();
+void menu_voz2000m();
+void menu_voz5000m();
+void menu_voz_ilimitado();
+void adicionar_voz();
+void adicionar_servico();
+void menu_canais_disponiveis();
 
 
-struct cliente {
+typedef struct voz {
+    int numeroMin;
+} voz;
+
+typedef struct canal {
+    int numerocanais;
+} canal;
+
+
+
+typedef struct cliente {
    char  nome[50];
    int   nif;
-};
+   voz* voz;
+   canal* canal;
+} cliente;
 struct cliente client[0];                                                                                               /*Como não sabemos a quantidade de clientes que vão ser introduzidos,
                                                                                                                         foi criado um vector para ser possivel guardar vários clientes,
                                                                                                                         e posteriormente no programa, o tamanho deste
@@ -32,8 +59,8 @@ void menu_principal()                                                           
             system("cls");                                                                                              //Limpar ecrã
             int escolha_menu;                                                                                           //variável local para guardar o valor da escolha do menu
                             /*Cabeçalho do menu e formatação "gráfica"*/
-            printf("|------------------------------------------------------------|");
-            printf("\n|                    MENU PRINCIPAL                          |\n");
+            printf("|------------------------------------------------------------|\n");
+            printf("|                    MENU PRINCIPAL                          |\n");
             printf("|     1-Clientes                                             |\n");
             printf("|     2-Servicos                                             |\n");
             printf("|     3-Listagens                                            |\n");
@@ -89,9 +116,9 @@ void menu_clientes()                                                            
             system("cls");                                                                                              //Limpar ecrã
             int escolha_menu;                                                                                           //variável local para guardar o valor da escolha do menu
                         /*Cabeçalho do menu e formatação "gráfica"*/
-            printf("|------------------------------------------------------------|");
-            printf("\n|                    MENU CLIENTES                           |\n");
-            printf("|     1-Inserir novo clientes                                |\n");
+            printf("|------------------------------------------------------------|\n");
+            printf("|                    MENU CLIENTES                           |\n");
+            printf("|     1-Inserir novos clientes                               |\n");
             printf("|     2-Atualizar informação cliente                         |\n");
             printf("|     3-Remover cliente                                      |\n");
             printf("|     4-Voltar ao menu principal                             |\n");
@@ -109,19 +136,142 @@ void menu_clientes()                                                            
                 case 4: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                     break;
             }
+             menu_principal();
     }
 void menu_servicos()                                                                                                    //Função serviços
     {
-            system("cls");                                                                                              //Limpar ecrã
+            system("cls");
+            int escolha_menu;                                                                                             //Limpar ecrã
                     /*Cabeçalho do menu e formatação "gráfica"*/
-            printf("|------------------------------------------------------------|");
-            printf("\n|                    MENU SERVIÇOS                           |\n");
+            printf("|------------------------------------------------------------|\n");
+            printf("|                    MENU SERVIÇOS                           |\n");
             printf("|     1-Canais disponíveis                                   |\n");
             printf("|     2-Servicos adicionais                                  |\n");
             printf("|     3-Tarifários do serviço de voz                         |\n");
             printf("|     4-Voltar ao menu principal                             |\n");
-            printf("|------------------------------------------------------------|");
+            printf("|------------------------------------------------------------|\n");
+
+            scanf("%d", &escolha_menu);                                                          //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            switch(escolha_menu)                                                                 //Função caso para seleção de menu consoante o valor introduizido
+            {
+                case 1: menu_canais_disponiveis();                                               //caso o valor introduzido seja '1' -> a função menu_canaisdisponiveis é invocada
+                    break;
+                case 2: menu_servicos_adicionais();                                              //caso o valor introduzido seja '2' -> a função menu_servicosadicionais é invocada
+                    break;
+                case 3: menu_tarifarios_servicos_voz();                                            //caso o valor introduzido seja '3' -> a função menu_tarifarioservicovoz é invocada
+                    break;
+                case 4: menu_principal();                                          //caso o valor introduzido seja '4' -> a função menu_coltaraomenuprincipal é invocada
+                    break;
+                }
+                menu_principal();
     }
+
+void menu_canaisdisponiveis()                                                                         //Função inserir servico
+    {
+        system("cls");                                                                         //Limpar ecrã
+        int i = 0;
+        int escolha_menu;
+                                                                                               //Inicialização da variável contadora c
+
+            printf("|------------------------------------------------------------|\n");
+            printf("|                    CANAIS DISPONIVEIS                      |\n");
+            printf("|     1-Canais base, 10 canais                               |\n");
+            printf("|     2-Canais extra, 20 canais                              |\n");
+            printf("|     3-Canais extra XL, 30 canais                           |\n");
+            printf("|     4-Voltar ao menu principal                             |\n");
+            printf("|------------------------------------------------------------|");
+
+            scanf("%d", &escolha_menu);                                                   //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            switch(escolha_menu)                                                          //Função caso para seleção de menu consoante o valor introduizido
+            {
+                case 1:;
+                    int* client = selecionar_cliente();
+                    adicionar_canal(client, 10);
+                    menu_canais_base();                                               //caso o valor introduzido seja '1' -> a função menu_canaisbase é invocada
+                    break;
+                case 2: menu_canais_extra();
+                        client = selecionar_cliente();
+                    adicionar_canal(client, 20);                                             //caso o valor introduzido seja '2' -> a função menu_canaisextra é invocada
+                    break;
+                case 3: menu_canais_extra_xl();
+                        client = selecionar_cliente();
+                    adicionar_canal(client, 30);                                            //caso o valor introduzido seja '3' -> a função menu_canaisextraxl é invocada
+                    break;
+                case 4: menu_principal();                                     //caso o valor introduzido seja '4' -> a função menu_voltaraomenuprincipal é invocada
+                    break;
+                }
+        menu_principal();
+    }
+
+void menu_servicos_adicionais()                                                                                                    //Função serviços
+    {
+            system("cls");
+            int escolha_menu;                                                                                             //Limpar ecrã
+                    /*Cabeçalho do menu e formatação "gráfica"*/
+            printf("|------------------------------------------------------------|\n");
+            printf("|                    SERVICOS ADICIONAIS                     |\n");
+            printf("|     1-Disney                                               |\n");
+            printf("|     2-SporTv                                               |\n");
+            printf("|     3-TVCine                                               |\n");
+            printf("|     4-Voltar ao menu principal                             |\n");
+            printf("|------------------------------------------------------------|\n");
+
+            scanf("%d", &escolha_menu);                                                          //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            switch(escolha_menu)                                                                 //Função caso para seleção de menu consoante o valor introduizido
+            {
+                case 1: menu_disney();
+                    int* client = selecionar_cliente();
+                    adicionar_servico(client, "Disney");                                               //caso o valor introduzido seja '1' -> a função menu_canaisbase é invocada
+                    break;                                            //caso o valor introduzido seja '1' -> a função menu_disney é invocada
+                case 2: menu_sportv();
+                    client = selecionar_cliente();
+                    adicionar_servico(client, "SporTv");
+                    break;
+                case 3: menu_tvcine();
+                    client = selecionar_cliente();
+                    adicionar_servico(client, "TVCine");                              //caso o valor introduzido seja '3' -> a função menu_tvcine é invocada
+                    break;
+                case 4: menu_principal();
+
+                    break;
+                }
+                menu_principal();
+    }
+
+void menu_tarifarios_servicos_voz()                                                                                                    //Função serviços
+    {
+            system("cls");
+            int escolha_menu;                                                                                              //Limpar ecrã
+                    /*Cabeçalho do menu e formatação "gráfica"*/
+            printf("|------------------------------------------------------------|\n");
+            printf("|                    SERVICOS DE VOZ                         |\n");
+            printf("|     1-Voz 2000 minutos                                     |\n");
+            printf("|     2-Voz 5000 minutos                                     |\n");
+            printf("|     3-Voz ilimitado                                        |\n");
+            printf("|     4-Voltar ao menu principal                             |\n");
+            printf("|------------------------------------------------------------|\n");
+
+            scanf("%d", escolha_menu);                                                          //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+            switch(escolha_menu)                                                                 //Função caso para seleção de menu consoante o valor introduizido
+            {
+                case 1: menu_voz2000m();
+                 int* client = selecionar_cliente();
+                    adicionar_voz(client, 2000);                                                        //caso o valor introduzido seja '1' -> a função menu_voz1000m é invocada
+                    break;
+                case 2: menu_voz5000m();
+                    client = selecionar_cliente();
+                    adicionar_voz(client, 5000);                                                        //caso o valor introduzido seja '2' -> a função menu_voz5000m é invocada
+                    break;
+                case 3: menu_voz_ilimitado();
+                    client = selecionar_cliente();
+                    adicionar_voz(client, 9999999999);                                                     //caso o valor introduzido seja '3' -> a função menu_vozilimitado é invocada
+                    break;
+                case 4: menu_principal();                                            //caso o valor introduzido seja '4' -> a função menu_coltaraomenuprincipal é invocada
+                    break;
+                }
+                menu_principal();
+    }
+
 void menu_listagens()                                                                                                   //Função listagens
     {
             system("cls");                                                                                              //Limpar ecrã
@@ -142,9 +292,9 @@ void menu_listagens()                                                           
             {
                 case 1: info_cliente();                                                                                 //caso o valor introduzido seja '1' -> a função info_cliente é invocada
                     break;
-                /*case 2: menu_servicos();                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
+                case 2: menu_servicos();                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
                     break;
-                case 3: menu_listagens();                                                                               //caso o valor introduzido seja '3' -> a função menu_listagens é invocada
+                /*case 3: menu_listagens();                                                                               //caso o valor introduzido seja '3' -> a função menu_listagens é invocada
                     break;
                 case 4: menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
                     break;
@@ -205,7 +355,7 @@ void atualizar_cliente()
             {
                 if(escolha_cliente == i)                                                                                //Condição para selecionar o cliente escolhido
                     {
-                        printf("Clienten selecionado - %s - Introduza novos dados\n", client[i].nome);
+                        printf("Cliente selecionado - %s - Introduza novos dados\n", client[i].nome);
                         printf("Insira o nome do cliente: ");
                         scanf(" %[^\t\n]c", client[i].nome);                                                            //Introdução dos dados atualizados do cliente
                         printf("Insira o NIF do cliente: ");
@@ -253,7 +403,41 @@ void remover_cliente()
         menu_principal();
     }
 
+
+int* selecionar_cliente()
+{
+        int numero_cliente;
+        int i = 0;
+        printf("Selecione o cliente:\n");
+        for (i = 0; i < numero_client_total; ++i){
+                printf("Nome: %d \n NIF: %s\n", i, client[i].nome);
+            }
+        scanf("%d", numero_cliente);for(i = 0; i <= numero_client_total; ++i)
+            {
+                if(numero_cliente == i)
+                    {
+                        printf("Cliente selecionado:\n nome %s\n nif %d", client[i].nome, client[i].nif);
+                    }
+            }
+
+        return &numero_cliente;
+}
+
+void adicionar_canal(int* clienteP, int numeroCanais)
+{
+   cliente *cliente = clienteP;
+   voz* vozP = cliente->voz;
+   vozP->numeroMin = numeroCanais;
+}
+
+void menu_canais_base(){
+    canal canal;
+    if(canal.numerocanais<10)
+    canal.numerocanais = 10;
+}
+
 int main( ) {
         setlocale(LC_ALL,"Portuguese");                                                                                 //Linguagem local para a utilização dos acentos da língua portuguesa
         menu_principal();
+        return 0;
 }
