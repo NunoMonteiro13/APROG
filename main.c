@@ -1,3 +1,5 @@
+/*13_11_2021 - 00:34 AM*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,6 +7,10 @@
 #include <windows.h>
 #include <locale.h>
 
+typedef struct servicos {
+    char nomeservicoad[50];
+    int servicosad_total;
+}services;
 typedef struct clientes {
     char nome_cliente[50];
     int nif;
@@ -19,6 +25,7 @@ typedef struct canais {
 typedef struct database {
     clients clients[100];
     channel channel[100];
+    services services[100];
 }database;
 void carregar(database *database){
 
@@ -33,6 +40,11 @@ void carregar(database *database){
     strcpy(database->channel[2].nome_canal, "Radical");
     strcpy(database->channel[3].nome_canal, "RTP");
     database->channel[0].canais_total = 3;
+    strcpy(database->services[1].nomeservicoad, "BOXHD");
+    strcpy(database->services[2].nomeservicoad, "TVcine");
+    strcpy(database->services[3].nomeservicoad, "Sportv");
+    database->services[0].servicosad_total = 3;
+
     menu_principal(database);
 }
 void remover_canais(database *database){
@@ -100,7 +112,7 @@ void remover_cliente(database *database){
                     scanf(" %c", &confirmacao);                                                                     //Leitura da confirmação
                     if(confirmacao == 's')                                                                          //Testa se a confirmação é sim ou não
                         {
-                            for(i = escolha_cliente; i < database->clients->clientes_total; i++)                                  //Ciclo para selecionar o cliente prentendido
+                            for(i = escolha_cliente; i < database->clients[0].clientes_total; i++)                                  //Ciclo para selecionar o cliente prentendido
                                 {
 
                                    printf("\nquantidade clientes %d\n", database->clients[0].clientes_total);
@@ -121,6 +133,49 @@ void remover_cliente(database *database){
                 printf("\nquantidade clientes %d\n", database->clients[0].clientes_total);
                 system("pause");
                 database->clients[0].clientes_total = database->clients[0].clientes_total - 1;
+            }
+    fflush(stdin);
+    system("pause");                                                                                                //Pausa o programa antes que outra instrução seja eclientes_totalecutada
+    menu_principal(database);
+}
+void remover_servicoad(database *database){
+
+    int escolha_cliente;                                                                                            //Variável que irá guardar o cliente a ser atualizado
+    int i = 0;
+    char confirmacao;                                                                                                    //Variável contadora
+    printf("Selecione o serviço adicional que prentende remover:\n");
+    for(i = 1; i <= database->services[0].servicosad_total ; ++i)
+        {
+            printf("\nNome do %d cliente inserido: ", i);
+            printf("%s", database->services[i].nomeservicoad);
+        }
+    scanf("%d", &escolha_cliente);                                                                                  //Após aparecer a lista dos clientes, leitura do cliente escolhido
+    fflush(stdin);
+    for(i = 0; i <= database->services[0].servicosad_total; ++i)                                                                        //Ciclo pra selecionar o cliente contido na variável escolha_ciente
+        {
+            if(escolha_cliente == i)                                                                                //Condição para selecionar o cliente escolhido
+                {
+                    printf("Cliente selecionado - %s\n", database->services[i].nomeservicoad);                                           //Mostra o cliente selecionado
+                    printf("Tem a certeza que deseja remover o cliente - %s do programa ? [s/n]", database->services[i].nomeservicoad);  //Mensagem para confirmação do cliente a remover
+                    scanf(" %c", &confirmacao);                                                                     //Leitura da confirmação
+                    if(confirmacao == 's')                                                                          //Testa se a confirmação é sim ou não
+                        {
+                            for(i = escolha_cliente; i < database->services[0].servicosad_total; i++)                                  //Ciclo para selecionar o cliente prentendido
+                                {
+                                   database->services[i] = database->services[i+1];                                               //Descolacamento das variáveis do vetor de forma a reorganizar removendo o cliente pretendido
+                                }
+                            printf("Serviço adicional removido com sucesso!\n");
+                        }else                                                                                       //Caso a confirmação não seja verdadeira (escolha_cliente != 's'), a operação é cancelada
+                        {
+                            printf("Operação cancelada!\n");
+                        }
+                }
+        }
+        if(confirmacao == 's')
+            {
+                printf("\nquantidade serviços adicionais %d\n", database->services[0].servicosad_total);
+                system("pause");
+                database->services[0].servicosad_total = database->services[0].servicosad_total - 1;
             }
     fflush(stdin);
     system("pause");                                                                                                //Pausa o programa antes que outra instrução seja eclientes_totalecutada
@@ -178,6 +233,31 @@ void atualizar_canais(database *database){
     system("pause");                                                                                                //Pausa o programa antes que outra instrução seja eclientes_totalecutada
     menu_principal(database);
 }
+void atualizar_servicosad(database *database){
+
+    int escolha_servicoad;                                                                                            //Variável que irá guardar o cliente a ser atualizado
+    int i = 0;                                                                                                      //Variável contadora
+    printf("Selecione o Serviço adicional que prentende atualizar:\n");
+    for (i = 1; i <= database->services[0].servicosad_total ; ++i)                                                                       //ciclo para pesquisar o cliente guardado na variável escolha_cliente
+        {
+            printf("%d - %s\n", i, database->services[i].nomeservicoad);
+        }
+    scanf("%d", &escolha_servicoad);                                                                                  //Após aparecer a lista dos clientes, leitura do cliente escolhido
+    fflush(stdin);
+    for(i = 1; i <= database->services[0].servicosad_total; ++i)                                                                       //Ciclo pra selecionar o cliente contido na variável escolha_ciente
+        {
+            if(escolha_servicoad == i)                                                                                //Condição para selecionar o cliente escolhido
+                {
+                    printf("Serviço adicional selecionado - %s - Introduza novos dados\n", database->services[i].nomeservicoad);
+                    printf("Insira o novo serviço adicional: ");
+                    fgets(database->services[i].nomeservicoad, 50, stdin);                                                        //Introdução dos dados atualizados do cliente
+                }
+        }
+    printf("Serviço adicional atualizado com sucesso!\n");
+    fflush(stdin);
+    system("pause");                                                                                                //Pausa o programa antes que outra instrução seja eclientes_totalecutada
+    menu_principal(database);
+}
 void info_cliente(database *database){
 
 
@@ -211,6 +291,19 @@ void info_canais(database *database){
     fflush(stdin);
     menu_principal(database);
 }
+void info_servicosad(database *database){
+
+    system("cls");                                                                                                      //Limpar ecrã
+    int i = 0;
+    printf("Numero de serviços adicionais total: %d\n", database->services[0].servicosad_total);
+    for(i = 1; i <= database->services[0].servicosad_total; ++i)
+        {
+            printf("%d %s\n", i, database->services[i].nomeservicoad);
+        }
+    system("pause");                                                                                                    //Pausa o programa antes que outra função seja selecionada
+    fflush(stdin);
+    menu_principal(database);
+}
 void menu_listagens(database *database){
     char escolha_menu;
     do{
@@ -236,8 +329,8 @@ void menu_listagens(database *database){
 //                    break;
                 case '3': info_canais(database);                                                                                  //caso o valor introduzido seja '3' -> a função info_canais é invocada
                       break;
-//                case 4: menu_informacoes();                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
-//                    break;
+                case '4': info_servicosad(database);                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
+                    break;
 //                case 5: menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
 //                    break;
                         default:
@@ -264,6 +357,28 @@ void inserir_canais(database *database){
             }
         database->channel[0].canais_total = quantidade_canais + database->channel[0].canais_total;
         printf("%d - Canais introduzidos com sucesso\n", database->channel[0].canais_total);
+        system("pause");
+        fflush(stdin);
+        menu_principal(database);
+}
+void inserir_servicosadicionais(database *database){
+        system("cls");                                                                                                  //Limpar ecrã
+        int i = 0;                                                                                                      //Inicialização da variável contadora i
+        int quantidade_servicosad = 0;                                                                                    //Inicialização da que irá guardar a quantidade de clientes a serem adicionados
+        printf("Indique a quantidade de serviços adicionais a serem inseridos: ");
+        scanf("%d", &quantidade_servicosad);                                                                              //Leitura da quantidade de clientes introduzida para a variável quantidade_clientes
+        fflush(stdin);
+        for(i = 0; i < quantidade_servicosad; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
+            {
+                printf("Insira o serviço adicional: ", i+database->services[i].nomeservicoad+1);
+                fgets(database->services[i+database->services[0].servicosad_total+1].nomeservicoad, 50, stdin);
+                //fgets(database[i+database[0].clients[i].numero_client_total].clients->nome, 50, stdin);
+                //scanf(" %[^\t\n]c", database[i+database->numero_client_total].nome);                                                //Leitura do nome do cliente introduzido com a possibilidade de ler nomes separados por espaços
+                fflush(stdin);
+                system ("cls");                                                                                         //Limpar ecrã
+            }
+        database->services[0].servicosad_total = quantidade_servicosad + database->services[0].servicosad_total;
+        //printf("%d - Clientes introduzidos com sucesso\n", database->clients[0].numero_client_total);
         system("pause");
         fflush(stdin);
         menu_principal(database);
@@ -344,29 +459,31 @@ void menu_servicos(database *database){
         printf("|     5-Remover Serviços adicionais                          |\n");
         printf("|     6-Remover Tarifários do serviço de voz                 |\n");
         printf("|     7-Atualizar Canais disponíveis                         |\n");
-        printf("|     7-Atualizar Serviços disponíveis                       |\n");
-        printf("|     7-Atualizar Tarifários disponíveis                     |\n");
-        printf("|     7-Voltar ao menu principal                             |\n");
+        printf("|     8-Atualizar Serviços disponíveis                       |\n");
+        printf("|     9-Atualizar Tarifários disponíveis                     |\n");
+        printf("|     10-Voltar ao menu principal                             |\n");
         printf("|------------------------------------------------------------|");
-        scanf("%c", &escolha_menu);                                                                                 //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
-        switch(escolha_menu)                                                                                        //Função caso para seleção de menu consoante o valor introduizido
+        scanf("%c", &escolha_menu);                                                                                     //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+        switch(escolha_menu)                                                                                            //Função caso para seleção de menu consoante o valor introduizido
         {
-            case '1': inserir_canais(database);                                                                               //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
+            case '1': inserir_canais(database);                                                                         //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
                 break;
-//                case 2: atualizar_cliente();                                                                            //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
-//                    break;
-//                case 3: remover_cliente();                                                                              //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
-//                    break;
-            case '4': remover_canais(database);                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case '2': inserir_servicosadicionais(database);                                                             //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
                 break;
-//                case 5: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+//                case 3: remover_cliente();                                                                            //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
 //                    break;
-//                case 6: menu_principal();                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case '4': remover_canais(database);                                                                         //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+                break;
+            case '5': remover_servicoad(database);                                                                                   //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+                break;
+//                case 6: menu_principal();                                                                             //caso o valor introduzido seja '4' -> a função menu_principal é invocada
 //                    break;
-            case '7': atualizar_canais(database);                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case '7': atualizar_canais(database);                                                                       //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+                break;
+            case '8': atualizar_servicosad(database);                                                                       //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                 break;
                     default:
-                    //CorDoTeclientes_totalto(252);                                                                                            //definir a cor de vermelho
+                    //CorDoTeclientes_totalto(252);                                                                     //definir a cor de vermelho
                     printf("Valor introduzido inválido! Insira novamente.\n\n");
                     system("pause");
                     break;
