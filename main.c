@@ -1,4 +1,4 @@
-/*16_01_2021 - 22:57 PM*/
+/*17_11_2021 - 02:59 AM*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +22,7 @@ typedef struct servicos_ {
     char canal[50];
     char servicosadicionais[50];
     char tarifariosvoz[50];
+    int total;
 }servicos_;
 typedef struct clientes {
     char nome_cliente[50];
@@ -620,35 +621,62 @@ void info_tarifariosdevoz(database *database){
 }
 
 void menu_faturacao(database *database){
-        printf("Selecione o cliente:\n");
-        int i = 0;
-        int escolha_cliente;
-        char escolha;
+    int escolha_cliente;
+    int escolha_canal;
+    int escolha_servico;
+    int posicao_cliente, posicao_canal, posicao_servicoadicional, posicao_tarifariovoz;
+    int i = 0;
     for(i = 1; i <= database->clients[0].clientes_total ; ++i)
         {
             printf("\nNome do %d cliente inserido: ", i);
             printf("%s", database->clients[i].nome_cliente);
         }
-    scanf("%d", &escolha_cliente);                                                                                  //Após aparecer a lista dos clientes, leitura do cliente escolhido
+    scanf("%d", &escolha_cliente);
     fflush(stdin);
-    for(i = 0; i <= database->clients[0].clientes_total; ++i)                                                                        //Ciclo pra selecionar o cliente contido na variável escolha_ciente
+    for(i = 0; i<= database->clients[0].clientes_total; i++)
         {
             if(escolha_cliente == i)
                 {
-                    printf("Cliente selecionado: %d %s\n", database->clients[0].clientes_total, database->clients[i].nome_cliente);
-                    do
+                    printf("Cliente selecionado: %s\n", database->clients[i].nome_cliente);
+                    printf("selecione o canal:\n");
+                    for(i = 1; i <= database->channel[0].canais_total; i++)
                         {
-                            printf("Selecione os canais: \n");
-                            for(i = 1; i <=database->channel[0].canais_total; i++)
+                            printf("%s", database->channel[i].nome_canal);
+                        }
+                    scanf("%d", &escolha_canal);
+                    for(i = 1; i <= database->channel[0].canais_total; i++)
+                        {
+                            if(escolha_canal == i)
                                 {
-                                    printf("%d %s", database->channel[0].canais_total+i, database->channel[i].nome_canal);
+                                    printf("Canal selecionado: %s\n", database->channel[i].nome_canal);
+                                    database->clients[0].servicos_[0].total = database->clients[0].servicos_[0].total +1;
+                                    strcpy( database->clients[escolha_cliente].servicos_[escolha_cliente].canal, database->channel[i].nome_canal);
                                 }
-                            printf("pretende adicionar mais algum canal ?");
-                            scanf("%c", %escolha);
-                        }while()
-                    
+                        }
+                    system("cls");
+                    printf("selecione o Serviço Adicional:\n");
+                    for(i = 1; i <= database->services[0].servicosad_total; i++)
+                        {
+                            printf("%s", database->services[i].nomeservicoad);
+                        }
+                    scanf("%d", &escolha_servico);
+                    for(i = 1; i <= database->channel[0].canais_total; i++)
+                        {
+                            if(escolha_servico == i)
+                                {
+                                    database->clients[0].servicos_[0].total = database->clients[0].servicos_[0].total +1;
+                                    printf("Serviço selecionado: %s\n", database->services[i].nomeservicoad);
+                                    strcpy(database->clients[escolha_cliente].servicos_[escolha_cliente].servicosadicionais, database->services[i].nomeservicoad);
+                                }
+                        }
                 }
         }
+        system("cls");
+
+        printf("%s\n", database->clients[escolha_cliente].servicos_[escolha_cliente].canal);
+        printf("%s\n", database->clients[escolha_cliente].servicos_[escolha_cliente].servicosadicionais);
+        system("pause");
+
 
 
 }
