@@ -1,4 +1,4 @@
-/*17_11_2021 - 02:59 AM*/
+/*17_01_2021 - 16:40 AM*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,27 +8,32 @@
 
 typedef struct canais {
     char nome_canal[50];
+    float preco_canais;
     int canais_total;
 }channel;
 typedef struct tarifario {
     char nometarifario[50];
+    float preco_tarifario;
     int tarifario_total;
 }tarifariovoz;
 typedef struct servicos {
     char nomeservicoad[50];
+    float preco_canal;
     int servicosad_total;
 }services;
 typedef struct servicos_ {
-    char canal[50];
-    char servicosadicionais[50];
-    char tarifariosvoz[50];
-    int total;
+    int totalcanais;
+    int totalservicosad;
+    int totaltarifarios;
 }servicos_;
 typedef struct clientes {
     char nome_cliente[50];
     int numero_nif;
     int clientes_total;
     servicos_ servicos_[10];
+    int posisoes_canais[50];                                                                                            //Vetor que irá guardar as posições dos canais
+    int posicoes_servicosad[50];                                                                                        //Vetor que irá guardar as posições dos serviços adicionais
+    int posicoes_tarifariosvoz[50];                                                                                     //Vetor que irá guardar as posições dos tarifários de voz
 }clients;
 
 typedef struct database {
@@ -37,7 +42,6 @@ typedef struct database {
     services services[100];
     tarifariovoz tarifariovoz[100];
 }database;
-
                                     /*Escrever nos ficheiros*/
 void escrever(database *database){
     FILE *filepointer;
@@ -84,6 +88,10 @@ void escrevercanais(database *database){
                     {
                         printf("falaha ao escrever");
                     }else{database->channel[i+1].nome_canal[strlen(database->channel[i+1].nome_canal) - 1] = '\0';}
+            }
+        for(i = 0; i < database->channel[0].canais_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
+            {
+                fprintf(filepointer, "%f\n", database->channel[i+1].preco_canais);
             }
     fclose(filepointer);
     menu_principal(database);
@@ -146,6 +154,10 @@ void lercanais(database *database){
         for(i = 0; i < database->channel[0].canais_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
             {
                 fgets(database->channel[i+1].nome_canal, 50,  filepointer);
+            }
+        for(i = 0; i < database->channel[0].canais_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
+            {
+                fscanf(filepointer, "%f", &database->channel[i+1].preco_canais);
             }
         fclose(filepointer);
         printf("canais\n");
@@ -222,7 +234,9 @@ void inserir_canais(database *database){
                     {
                         printf("Falha ao ler input");
                     }//else{database->channel[i+database->channel[0].canais_total+1].nome_canal[strlen(database->channel[i+database->channel[0].canais_total+1].nome_canal) - 1] = '\0';}
-                system ("cls");                                                                                         //Limpar ecrã
+                printf("Insira o preço do Canal: ", i+database->channel[i].canais_total+1);
+                scanf("\n%f", &database->channel[i+database->channel[0].canais_total+1].preco_canais);                                                       //Leitura do NIF do cliente e guarda no vetor i na posição i
+                fflush(stdin);                                                                                       //Limpar ecrã
             }
         database->channel[0].canais_total = quantidade_canais + database->channel[0].canais_total;
         printf("%d - Canais introduzidos com sucesso\n", database->channel[0].canais_total);
@@ -572,6 +586,12 @@ void info_cliente(database *database){
             printf("%s", database->clients[i].nome_cliente);
             printf("\nNIF do %d cliente inserido: ", i);
             printf("%d\n", database->clients[i].numero_nif);
+           /* printf("\Canal do %d cliente inserido: ", i);
+            printf("%s\n", database->clients[i].servicos_[i].canal);
+            printf("\Serviços adicionais do %d cliente inserido: ", i);
+            printf("%s\n", database->clients[i].servicos_[i].servicosadicionais);*/
+
+
         }
                                                                                                   //Pausa o programa antes que outra função seja selecionada
     fflush(stdin);
@@ -586,8 +606,8 @@ void info_canais(database *database){
     printf("Numero de canais total: %d\n", database->channel[0].canais_total);
     for(i = 1; i <= database->channel[0].canais_total; ++i)
         {
-            printf("\nNome do %d Canal inserido: ", i);
-            printf("%s\n\n\n", database->channel[i].nome_canal);
+            printf("\nNome do %d Canal inserido: %s - Preço: %0.2f\n", i, database->channel[i].nome_canal, database->channel[i].preco_canais);
+
         }
     system("pause");                                                                                                //Pausa o programa antes que outra função seja selecionada
     fflush(stdin);
@@ -621,11 +641,26 @@ void info_tarifariosdevoz(database *database){
 }
 
 void menu_faturacao(database *database){
+
     int escolha_cliente;
     int escolha_canal;
     int escolha_servico;
-    int posicao_cliente, posicao_canal, posicao_servicoadicional, posicao_tarifariovoz;
+    int escolha_tarifario;
+
+    char escolha_adicionar_canais;
+    char escolha_adicionar_servicosad;
+    char escolha_adicionar_tarifarios;
+
+    int total_canais_selecionados = 0;
+    int total_servicosad_selecionados = 0;
+    int total_tarifarios_selecionados = 0;
+
+    int posicao_canal = 0;
+    int posicao_servicoad = 0;
+    int posicao_tarifariovoz = 0;
+
     int i = 0;
+
     for(i = 1; i <= database->clients[0].clientes_total ; ++i)
         {
             printf("\nNome do %d cliente inserido: ", i);
@@ -638,47 +673,130 @@ void menu_faturacao(database *database){
             if(escolha_cliente == i)
                 {
                     printf("Cliente selecionado: %s\n", database->clients[i].nome_cliente);
-                    printf("selecione o canal:\n");
-                    for(i = 1; i <= database->channel[0].canais_total; i++)
-                        {
-                            printf("%s", database->channel[i].nome_canal);
-                        }
-                    scanf("%d", &escolha_canal);
-                    for(i = 1; i <= database->channel[0].canais_total; i++)
-                        {
-                            if(escolha_canal == i)
-                                {
-                                    printf("Canal selecionado: %s\n", database->channel[i].nome_canal);
-                                    database->clients[0].servicos_[0].total = database->clients[0].servicos_[0].total +1;
-                                    strcpy( database->clients[escolha_cliente].servicos_[escolha_cliente].canal, database->channel[i].nome_canal);
-                                }
-                        }
+                    do
+                    {
+                        system("cls");
+                        total_canais_selecionados++;
+                        printf("selecione o canal:\n");
+                        for(i = 1; i <= database->channel[0].canais_total; i++)
+                            {
+                                printf("%d - %s", i, database->channel[i].nome_canal);
+                            }
+                        scanf("%d", &escolha_canal);
+                        fflush(stdin);
+                        for(i = 1; i <= database->channel[0].canais_total; i++)
+                            {
+                                if(escolha_canal == i)
+                                    {
+                                        printf("Canal selecionado: %s\n", database->channel[i].nome_canal);
+                                        posicao_canal = escolha_canal;
+                                    }
+                            }
+                        database->clients[escolha_cliente].posisoes_canais[total_canais_selecionados] = posicao_canal;
+                        printf("pretende adicionar mais canais?: ");
+                        scanf("%c", &escolha_adicionar_canais);
+                        fflush(stdin);
+                        }while(escolha_adicionar_canais == 's');
                     system("cls");
-                    printf("selecione o Serviço Adicional:\n");
-                    for(i = 1; i <= database->services[0].servicosad_total; i++)
-                        {
-                            printf("%s", database->services[i].nomeservicoad);
-                        }
-                    scanf("%d", &escolha_servico);
-                    for(i = 1; i <= database->channel[0].canais_total; i++)
-                        {
-                            if(escolha_servico == i)
-                                {
-                                    database->clients[0].servicos_[0].total = database->clients[0].servicos_[0].total +1;
-                                    printf("Serviço selecionado: %s\n", database->services[i].nomeservicoad);
-                                    strcpy(database->clients[escolha_cliente].servicos_[escolha_cliente].servicosadicionais, database->services[i].nomeservicoad);
-                                }
-                        }
-                }
+//                    for(i = 0; i<=total_canais_selecionados; i++)
+//                        {
+//                            printf("Canais selecionados: %d %s\n", database->clients[escolha_cliente].posisoes_canais[i], database->channel[database->clients[escolha_cliente].posisoes_canais[i]].nome_canal);
+//                        }
+//                    system("pause");
+                    system("cls");
+
+/*----------------------------------------------------------------------------------------------------------------------*/
+
+                    do
+                    {
+                        system("cls");
+                        total_servicosad_selecionados++;
+                        printf("selecione o serviço adicional:\n");
+                        for(i = 1; i <= database->services[0].servicosad_total; i++)
+                            {
+                                printf("%d - %s", i, database->services[i].nomeservicoad);
+                            }
+                        scanf("%d", &escolha_servico);
+                        fflush(stdin);
+                        for(i = 1; i <= database->services[0].servicosad_total; i++)
+                            {
+                                if(escolha_servico == i)
+                                    {
+                                        printf("Serviço adixional selecionado: %s\n", database->services[i].nomeservicoad);
+                                        posicao_servicoad = escolha_servico;
+                                    }
+                            }
+                        database->clients[escolha_cliente].posicoes_servicosad[total_servicosad_selecionados] = posicao_servicoad;
+                        printf("pretende adicionar mais serviços adicionais?: ");
+                        scanf("%c", &escolha_adicionar_servicosad);
+                        fflush(stdin);
+                        }while(escolha_adicionar_servicosad == 's');
+//                    system("cls");
+//                    for(i = 0; i<=total_servicosad_selecionados; i++)
+//                        {
+//                            printf("Serviços adicionais selecionados: %d %s\n", database->clients[escolha_cliente].posicoes_servicosad[i], database->services[database->clients[escolha_cliente].posicoes_servicosad[i]].nomeservicoad);
+//                        }
+//                    system("pause");
+                    system("cls");
+/*----------------------------------------------------------------------------------------------------------------------*/
+
+                    do
+                    {
+                        system("cls");
+                        total_tarifarios_selecionados++;
+                        printf("selecione o Tarifário de Voz:\n");
+                        for(i = 1; i <= database->tarifariovoz[0].tarifario_total; i++)
+                            {
+                                printf("%d - %s", i, database->tarifariovoz[i].nometarifario);
+                            }
+                        scanf("%d", &escolha_tarifario);
+                        fflush(stdin);
+                        for(i = 1; i <= database->tarifariovoz[0].tarifario_total; i++)
+                            {
+                                if(escolha_tarifario == i)
+                                    {
+                                        printf("Tarifário de Voz selecionado: %s\n", database->tarifariovoz[i].nometarifario);
+                                        posicao_tarifariovoz = escolha_tarifario;
+                                    }
+                            }
+                        database->clients[escolha_cliente].posicoes_tarifariosvoz[total_tarifarios_selecionados] = posicao_tarifariovoz;
+                        printf("pretende adicionar mais Tarifário de Voz?: ");
+                        scanf("%c", &escolha_adicionar_tarifarios);
+                        fflush(stdin);
+                        }while(escolha_adicionar_tarifarios == 's');
+//                    system("cls");
+//                    for(i = 0; i<=total_tarifarios_selecionados; i++)
+//                        {
+//                            printf("Tarifário de Voz: %d %s\n", database->clients[escolha_cliente].posicoes_tarifariosvoz[i], database->tarifariovoz[database->clients[escolha_cliente].posicoes_tarifariosvoz[i]].nometarifario);
+//                        }
+//                    system("pause");
+                    system("cls");
+                }//fim do IF
+
         }
-        system("cls");
-
-        printf("%s\n", database->clients[escolha_cliente].servicos_[escolha_cliente].canal);
-        printf("%s\n", database->clients[escolha_cliente].servicos_[escolha_cliente].servicosadicionais);
-        system("pause");
-
-
-
+            printf("|-----------------------------------------------------------------------|");
+            printf("\n|                    FATURA DOS SERVIÇOS ITCabo, lda                    |\n");
+            printf("|-----------------------------------------------------------------------|\n");
+            printf("Cliente: %s\n", database->clients[escolha_cliente].nome_cliente);
+            printf("Canais associados ao serviço:\n");
+            for(i = 1; i<=total_canais_selecionados; i++)
+                {
+                    printf("Canal TV: %s\n", database->channel[database->clients[escolha_cliente].posisoes_canais[i]].nome_canal);
+                }
+            printf("|-----------------------------------------------------------------------|\n");
+            printf("Serviços Adicionais associados ao serviço:\n");
+            for(i = 1; i<=total_servicosad_selecionados; i++)
+                {
+                    printf("Serviços adicionais: %s\n", database->services[database->clients[escolha_cliente].posicoes_servicosad[i]].nomeservicoad);
+                }
+            printf("|-----------------------------------------------------------------------|\n");
+            printf("Tarifários de Voz associados ao serviço:\n");
+            for(i = 1; i<=total_tarifarios_selecionados; i++)
+                {
+                    printf("Tarifário de Voz: %s\n", database->tarifariovoz[database->clients[escolha_cliente].posicoes_tarifariosvoz[i]].nometarifario);
+                }
+            printf("|-----------------------------------------------------------------------|");
+            system("pause");
 }
 
 void menu_listagens(database *database){
@@ -851,7 +969,10 @@ void main()
 {
 
     setlocale(LC_ALL,"Portuguese");
+    
     database l, *database=&l;
+    
+    
     ler(database);
     //ler(database);
     //escrever(database);
