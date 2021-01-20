@@ -21,27 +21,40 @@ typedef struct servicos {
     float preco_servicoad;
     int servicosad_total;
 }services;
-typedef struct servicos_ {
-    int totalcanais;
-    int totalservicosad;
-    int totaltarifarios;
-}servicos_;
 typedef struct clientes {
     char nome_cliente[50];
     int numero_nif;
     int clientes_total;
-    servicos_ servicos_[10];
     int posisoes_canais[50];                                                                                            //Vetor que irá guardar as posições dos canais
     int posicoes_servicosad[50];                                                                                        //Vetor que irá guardar as posições dos serviços adicionais
     int posicoes_tarifariosvoz[50];                                                                                     //Vetor que irá guardar as posições dos tarifários de voz
 }clients;
-
 typedef struct database {
     clients clients[100];
     channel channel[100];
     services services[100];
     tarifariovoz tarifariovoz[100];
 }database;
+
+int validar_nif(database *database, int x){
+    int i,k=1, aux1=x, aux2=0;
+
+
+    while(aux1!=0){
+        if(aux1>0)
+        {
+            aux2++;
+        }
+        aux1=aux1/10;
+    }
+    for(i=0; i<=database->clients[0].clientes_total; i++){
+        if(database->clients[i].numero_nif==x || aux2!=9){
+           k=-1;
+        }
+    }
+    return k;
+}
+
                                     /*Escrever nos ficheiros*/
 void escrever(database *database){
     FILE *filepointer;
@@ -59,20 +72,7 @@ void escrever(database *database){
         for(i = 0; i < database->clients[0].clientes_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
             {
                 fprintf(filepointer, "%d\n", database->clients[i+1].numero_nif);
-            }/*
-        for(i = 0; i < database->channel[0].canais_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
-            {
-                fprintf(filepointer, "%s\n", database->channel[i+1].nome_canal);
             }
-        for(i = 0; i < database->services[0].servicosad_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
-            {
-                fprintf(filepointer, "%s\n", database->services[i+1].nomeservicoad);
-            }
-        for(i = 0; i < database->tarifariovoz[0].tarifario_total; ++i)                                                                        //Inicialização do ciclo 'para' que começa em 0, vai até o numero de clientes introduzidos e incrementa de 1 em 1
-            {
-                fprintf(filepointer, "%s\n", database->tarifariovoz[i+1].nometarifario);
-            }*/
-
     fclose(filepointer);
     menu_principal(database);
 }
@@ -150,7 +150,6 @@ void ler(database *database){
             {
                 fscanf(filepointer, "%d", &database->clients[i+1].numero_nif);
             }
-        printf("ler\n");
         fclose(filepointer);
         lercanais(database);
 }
@@ -168,7 +167,6 @@ void lercanais(database *database){
                 fscanf(filepointer, "%f", &database->channel[i+1].preco_canais);
             }
         fclose(filepointer);
-        printf("canais\n");
         lerservicosad(database);
 }
 void lerservicosad(database *database){
@@ -185,7 +183,6 @@ void lerservicosad(database *database){
                 fscanf(filepointer, "%f", &database->services[i+1].preco_servicoad);
             }
         fclose(filepointer);
-        printf("serviços adicionais\n");
         lertarifarios(database);
 }
 void lertarifarios(database *database){
@@ -222,17 +219,13 @@ void inserir_tarifariovoz(database *database){
                 if(fgets(database->tarifariovoz[i+database->tarifariovoz[0].tarifario_total+1].nometarifario, 50, stdin) == NULL)
                     {
                         printf("Falha a ler input");
-                    }/*else
-                    {
-                        database->tarifariovoz[i+database->tarifariovoz[0].tarifario_total+1].nometarifario[strlen(database->tarifariovoz[i+database->tarifariovoz[0].tarifario_total+1].nometarifario) -1 ] = '\0';
-                    }*/
+                    }
                 printf("Insira o preço do Tarifário de Voz: ", i+database->tarifariovoz[i].tarifario_total+1);
                 scanf("%f", &database->tarifariovoz[i+database->tarifariovoz[0].tarifario_total+1].preco_tarifario);                                                       //Leitura do NIF do cliente e guarda no vetor i na posição i
                 fflush(stdin);
                 system ("cls");                                                                                         //Limpar ecrã
             }
         database->tarifariovoz[0].tarifario_total = quantidade_tarifarios + database->tarifariovoz[0].tarifario_total;
-        //printf("%d - Clientes introduzidos com sucesso\n", database->clients[0].numero_client_total);
         system("pause");
         fflush(stdin);
         escrevertarifarios(database);
@@ -250,7 +243,7 @@ void inserir_canais(database *database){
                 if(fgets(database->channel[i+database->channel[0].canais_total+1].nome_canal, 50, stdin) == NULL)
                     {
                         printf("Falha ao ler input");
-                    }//else{database->channel[i+database->channel[0].canais_total+1].nome_canal[strlen(database->channel[i+database->channel[0].canais_total+1].nome_canal) - 1] = '\0';}
+                    }
                 printf("Insira o preço do Canal: ", i+database->channel[i].canais_total+1);
                 scanf("%f", &database->channel[i+database->channel[0].canais_total+1].preco_canais);                                                       //Leitura do NIF do cliente e guarda no vetor i na posição i
                 fflush(stdin);                                                                                       //Limpar ecrã
@@ -274,7 +267,7 @@ void inserir_servicosadicionais(database *database){
                 if(fgets(database->services[i+database->services[0].servicosad_total+1].nomeservicoad, 50, stdin) == NULL)
                     {
                         printf("Falha ao ler input");
-                    }//else{database->services[i+database->services[0].servicosad_total+1].nomeservicoad[strlen(database->services[i+database->services[0].servicosad_total+1].nomeservicoad) -1] = '\0';}
+                    }
                 printf("Insira o preço do Tarifário de Voz: ", i+database->tarifariovoz[i].tarifario_total+1);
                 scanf("%f", &database->tarifariovoz[i+database->tarifariovoz[0].tarifario_total+1].preco_tarifario);                                                       //Leitura do NIF do cliente e guarda no vetor i na posição i
                 fflush(stdin);
@@ -288,7 +281,9 @@ void inserir_servicosadicionais(database *database){
 }
 void inserir_clientes(database *database){
         system("cls");                                                                                                  //Limpar ecrã
-        int i = 0;                                                                                                      //Inicialização da variável contadora i
+        int aux_nif = 0;
+        int i = 0;
+        int k = 0;                                                                                                     //Inicialização da variável contadora i
         int quantidade_clientes = 0;                                                                                    //Inicialização da que irá guardar a quantidade de clientes a serem adicionados
         printf("Indique a quantidade de clientes a serem inseridos: ");
         scanf("%d", &quantidade_clientes);                                                                              //Leitura da quantidade de clientes introduzida para a variável quantidade_clientes
@@ -299,14 +294,18 @@ void inserir_clientes(database *database){
                 if(fgets(database->clients[i+database->clients[0].clientes_total+1].nome_cliente, 50, stdin) == NULL)
                     {
                         printf("Falha ao ler input");
-                    }//else{database->clients[i+database->clients[0].clientes_total+1].nome_cliente[strlen(database->clients[i+database->clients[0].clientes_total+1].nome_cliente) - 1] = '\0';}
-                printf("Insira o NIF do %d cliente: ", i+database->clients[i].clientes_total+1);
-                scanf("\n%d", &database->clients[i+database->clients[0].clientes_total+1].numero_nif);                                                       //Leitura do NIF do cliente e guarda no vetor i na posição i
+                    }
+                do
+                    {
+                        printf("Insira o NIF do %d cliente: ", i+database->clients[i].clientes_total+1);
+                        scanf("%d", &aux_nif);
+                        fflush(stdin);
+                    }while(validar_nif(database, aux_nif) == -1);
+                database->clients[i+database->clients[0].clientes_total+1].numero_nif = aux_nif;
                 fflush(stdin);
                 system ("cls");                                                                                         //Limpar ecrã
             }
         database->clients[0].clientes_total = quantidade_clientes + database->clients[0].clientes_total;
-        //printf("%d - Clientes introduzidos com sucesso\n", database->clients[0].numero_client_total);
         system("pause");
         fflush(stdin);
         escrever(database);
@@ -314,8 +313,8 @@ void inserir_clientes(database *database){
 
 void atualizar_cliente(database *database){
 
-    int escolha_cliente;                                                                                            //Variável que irá guardar o cliente a ser atualizado
-    int i = 0;                                                                                                      //Variável contadora
+    int escolha_cliente;                                                                                                //Variável que irá guardar o cliente a ser atualizado
+    int i = 0;                                                                                                          //Variável contadora
     printf("Selecione o cliente que prentende atualizar:\n");
     for (i = 1; i <= database->clients[0].clientes_total ; ++i)                                                                       //ciclo para pesquisar o cliente guardado na variável escolha_cliente
         {
@@ -616,11 +615,6 @@ void info_cliente(database *database){
             printf("%s", database->clients[i].nome_cliente);
             printf("\nNIF do %d cliente inserido: ", i);
             printf("%d\n", database->clients[i].numero_nif);
-           /* printf("\Canal do %d cliente inserido: ", i);
-            printf("%s\n", database->clients[i].servicos_[i].canal);
-            printf("\Serviços adicionais do %d cliente inserido: ", i);
-            printf("%s\n", database->clients[i].servicos_[i].servicosadicionais);*/
-
 
         }
                                                                                                   //Pausa o programa antes que outra função seja selecionada
@@ -841,15 +835,15 @@ void menu_listagens(database *database){
                 case '1': info_cliente(database);                                                                                 //caso o valor introduzido seja '1' -> a função info_cliente é invocada
                     break;
                 case '2': info_canais(database);                                                                              //caso o valor introduzido seja '2' -> a função menu_servicos é invocada
-//                    break;
+                    break;
                 case '3': info_servicosad(database);                                                                                  //caso o valor introduzido seja '3' -> a função info_canais é invocada
                       break;
                 case '4': info_tarifariosdevoz(database);                                                                             //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
                     break;
-//                case 5: menu_faturacao();                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
-//                    break;
+                case '5':
+                    printf("Pedimos desculpa, mas esta função ainda não foi implementada.");                                                                               //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
+                    break;
                         default:
-                    //CorDoTeclientes_totalto(252);                                                                                            //definir a cor de vermelho
                     printf("Valor introduzido inválido! Insira novamente.\n\n");
                     system("pause");
                     break;
@@ -886,7 +880,7 @@ void menu_clientes(database *database){
                 case '4': menu_principal(database);                                                                               //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                     break;
                         default:
-                    //CorDoTeclientes_totalto(252);                                                                                            //definir a cor de vermelho
+                                                                                                                        //definir a cor de vermelho
                     printf("Valor introduzido inválido! Insira novamente.\n\n");
                     system("pause");
                     break;
@@ -895,9 +889,9 @@ void menu_clientes(database *database){
 
 }
 void menu_servicos(database *database){
-
-        system("cls");                                                                                              //Limpar ecrã
-        char escolha_menu;                                                                                           //variável local para guardar o valor da escolha do menu
+        int x = 0;
+        system("cls");                                                                                                  //Limpar ecrã
+        char escolha_menu[3];                                                                                           //variável local para guardar o valor da escolha do menu
         do{
 
         printf("|------------------------------------------------------------|");
@@ -913,39 +907,41 @@ void menu_servicos(database *database){
         printf("|     9-Atualizar Tarifários disponíveis                     |\n");
         printf("|     10-Voltar ao menu principal                            |\n");
         printf("|------------------------------------------------------------|");
-        scanf("%c", &escolha_menu);                                                                                     //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
-        switch(escolha_menu)                                                                                            //Função caso para seleção de menu consoante o valor introduizido
+        scanf("%s", escolha_menu);                                                                                     //Leitura e atribuição do valor intrdouzido à variável local escolha_menu
+        fflush(stdin);
+        x = atoi(escolha_menu);
+        switch(x)                                                                                            //Função caso para seleção de menu consoante o valor introduizido
         {
-            case '1': inserir_canais(database);                                                                         //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
+            case 1: inserir_canais(database);                                                                         //caso o valor introduzido seja '1' -> a função inserir_cliente é invocada
                 break;
-            case '2': inserir_servicosadicionais(database);                                                             //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
+            case 2: inserir_servicosadicionais(database);                                                             //caso o valor introduzido seja '2' -> a função atualizar_cliente é invocada
                 break;
-            case '3': inserir_tarifariovoz(database);                                                                            //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
+            case 3: inserir_tarifariovoz(database);                                                                            //caso o valor introduzido seja '3' -> a função remover_cliente é invocada
                 break;
-            case '4': remover_canais(database);                                                                         //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case 4: remover_canais(database);                                                                         //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                 break;
-            case '5': remover_servicoad(database);                                                                                   //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case 5: remover_servicoad(database);                                                                                   //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                 break;
-            case '6': remover_tarifariodevoz(database);                                                                             //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case 6: remover_tarifariodevoz(database);                                                                             //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                 break;
-            case '7': atualizar_canais(database);                                                                       //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case 7: atualizar_canais(database);                                                                       //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                 break;
-            case '8': atualizar_servicosad(database);                                                                       //caso o valor introduzido seja '4' -> a função menu_principal é invocada
+            case 8: atualizar_servicosad(database);                                                                       //caso o valor introduzido seja '4' -> a função menu_principal é invocada
                 break;
-            case '9': atualizar_tarifariovoz(database);
+            case 9: atualizar_tarifariovoz(database);
+                break;
+            case 10: menu_principal(database);
                 break;
                     default:
-                    //CorDoTeclientes_totalto(252);                                                                     //definir a cor de vermelho
+                                                                                //definir a cor de vermelho
                     printf("Valor introduzido inválido! Insira novamente.\n\n");
                     system("pause");
                     break;
             }
-        }while(escolha_menu !='0');
+        }while(x !=0);
 
 }
 void menu_principal(database *database){
-
-
     char escolha_menu;
     do{
 
@@ -971,14 +967,15 @@ void menu_principal(database *database){
                     break;
                 case '3': menu_listagens(database);                                                                                       //caso o valor introduzido seja '3' -> a função menu_listagens é invocada
                     break;
-//                case 4: menu_informacoes();                                                                                     //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
-//                break;
+                case '4':
+                    printf("Pedimos desculpa, mas esta função ainda não foi implementada.\n");                                                                                     //caso o valor introduzido seja '4' -> a função menu_informacoes é invocada
+                    system("pause");
+                break;
                 case '5': menu_faturacao(database);                                                                                       //caso o valor introduzido seja '5' -> a função menu_faturacao é invocada
                     break;
                 default:
-//                    CorDoTeclientes_totalto(252);                                                                                            //definir a cor de vermelho
-//                    printf("Valor introduzido inválido! Insira novamente.\n\n");
-//                    system("pause");
+                    printf("Valor introduzido inválido! Insira novamente.\n\n");
+                    system("pause");
                     break;
                 }
 
@@ -987,15 +984,7 @@ void menu_principal(database *database){
 
 void main()
 {
-
     setlocale(LC_ALL,"Portuguese");
-
     database l, *database=&l;
-
-
     ler(database);
-    //ler(database);
-    //escrever(database);
-    //menu_principal(database);
-
 }
